@@ -119,11 +119,69 @@ function Heart() {
 }
 
 function NextPage() {
+  const [isOpen, setIsOpen] = useState(false);
+
   return (
-    <main className="next-page">
-      <Link href="/heart" className="back-link" data-testid="link-back-heart">
-        <span aria-hidden="true">←</span> Back
+    <main className={`next-page letter-page${isOpen ? ' is-open' : ''}`} data-testid="page-next">
+      <Link href="/heart" className="back-link letter-back" data-testid="link-back-heart">
+        <span aria-hidden="true">←</span> Back to the heart
       </Link>
+      <section className="letter-scene" aria-labelledby="letter-heading">
+        <p className="letter-eyebrow" data-testid="text-letter-eyebrow">A letter, kept close</p>
+        <h1 id="letter-heading" className="letter-heading" data-testid="text-letter-heading">
+          For Doua
+        </h1>
+        <p className="letter-invitation" aria-live="polite" data-testid="text-letter-invitation">
+          {isOpen ? 'A few words, from my heart.' : 'There is something I wanted you to keep.'}
+        </p>
+
+        <div className="envelope-stage" data-testid="envelope-stage">
+          <article
+            className="letter-paper"
+            dir="rtl"
+            lang="ar"
+            aria-label="A poem for Doua from Rayan"
+            data-testid="letter-paper"
+          >
+            <div className="paper-rule" aria-hidden="true" />
+            <div className="poem-copy" data-testid="text-poem">
+              <p>إلى دعاء..</p>
+              <p>أَمَا رأيتِ كيف القلبُ يبتسِمُ؟</p>
+              <p>وحين تُشرقين، الأيام تبتسمُ!</p>
+              <p>تعلّمتُ الحروفَ بكل ألسنة الورى</p>
+              <p>لكنَّ اسمَكِ وحدَهُ في الروح ينحسمُ</p>
+              <p>بنيتُ لكِ الفؤادَ قصورَ عِشقٍ دافئة</p>
+              <p>بها كلُّ اللغاتِ لصوتكِ تنضمُ</p>
+              <p>فأنتِ النبضُ إن ضاق الزمان بنا</p>
+              <p>وأنتِ الروحُ، بل أنتِ التي تُهيمُ</p>
+            </div>
+            <p className="paper-signature" dir="ltr">Rayan</p>
+          </article>
+          <div className="envelope" aria-hidden="true">
+            <div className="envelope-back" />
+            <div className="envelope-pocket" />
+            <div className="envelope-flap" />
+            <div className="envelope-shade" />
+          </div>
+          <button
+            type="button"
+            className="seal-button"
+            onClick={() => setIsOpen((open) => !open)}
+            aria-label={isOpen ? 'Close the letter' : 'Open the letter'}
+            aria-expanded={isOpen}
+            aria-controls="letter-heading"
+            data-testid="button-letter-seal"
+          >
+            <svg className="seal-heart" viewBox="0 0 64 58" aria-hidden="true">
+              <path d="M32 55 6.8 30.4C-5.2 17 5.1 1 19.1 5.1 25 6.8 29 11.4 32 15c3-3.6 7-8.2 12.9-9.9C58.9 1 69.2 17 57.2 30.4L32 55Z" />
+            </svg>
+            <span className="seal-initial" aria-hidden="true">R</span>
+          </button>
+        </div>
+        <p className="letter-footnote" data-testid="text-letter-footnote">
+          {isOpen ? 'Tap the seal to fold it away.' : 'Open with a little tap.'}
+        </p>
+      </section>
     </main>
   );
 }
