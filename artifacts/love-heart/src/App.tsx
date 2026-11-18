@@ -1,99 +1,152 @@
-const phrases = [
-  { text: 'I love you', language: 'English' },
-  { text: "Je t'aime", language: 'Français' },
-  { text: 'Te amo', language: 'Español' },
-  { text: 'Ich liebe dich', language: 'Deutsch' },
-  { text: 'الخ (أحبك)', language: 'العربية' },
-  { text: '사랑해', language: '한국어' },
-  { text: 'Я тебя люблю', language: 'Русский' },
-  { text: 'Aku cinta kamu', language: 'Bahasa Indonesia' },
-  { text: 'Seni seviyorum', language: 'Türkçe' },
-  { text: "Σ' αγαπώ", language: 'Ελληνικά' },
-  { text: 'Anh yêu em', language: 'Tiếng Việt' },
-  { text: 'Kocham cię', language: 'Polski' },
-  { text: 'Ik hou van jou', language: 'Nederlands' },
-  { text: 'Jeg elsker dig', language: 'Dansk' },
-  { text: 'Dúbh fort an', language: 'Gaeilge' },
-  { text: 'Amor', language: 'Latin' },
-];
-const pointAt = (t: number) => {
-  const x = 16 * Math.sin(t) ** 3;
-  const y =
-    13 * Math.cos(t) -
-    5 * Math.cos(2 * t) -
-    2 * Math.cos(3 * t) -
-    Math.cos(4 * t);
-  return { x: 400 + x * 20, y: 400 - y * 20 };
-};
+import { useEffect, useState } from 'react';
+import { Link, Route, Switch, Router as WouterRouter } from 'wouter';
+import {
+  createRandomHeartLayout,
+  HEART_PATH,
+  HEART_SIZE,
+  type PhrasePlacement,
+} from './lib/heart-layout';
 
-const heartPath = Array.from({ length: 321 }, (_, index) => {
-  const point = pointAt((index / 320) * Math.PI * 2);
-  return `${index === 0 ? 'M' : 'L'}${point.x.toFixed(2)},${point.y.toFixed(2)}`;
-}).join(' ') + ' Z';
-
-const heartRows = Array.from({ length: 34 }, (_, row) => ({
-  y: 100 + row * 19,
-  phrases: Array.from(
-    { length: 16 },
-    (_, index) => phrases[(row * 3 + index) % phrases.length].text,
-  ).join('   '),
-}));
-
-function Home() {
+function Welcome() {
   return (
-    <main className="love-scene">
-      <svg
-        className="love-art"
-        viewBox="0 0 800 800"
-        role="img"
-        aria-labelledby="heart-title heart-desc"
-      >
-        <title id="heart-title">رسالة حب إلى دعاء من ريان</title>
-        <desc id="heart-desc">
-          عبارات أحبك بلغات مختلفة تشكل قلباً، وكلمة دعاء في الوسط، وتوقيع من ريان.
-        </desc>
-        <defs>
-          <clipPath id="heart-clip">
-            <path d={heartPath} />
-          </clipPath>
-        </defs>
-        <g clipPath="url(#heart-clip)">
-          {heartRows.map((row, index) => (
-            <text
-              key={row.y}
-              className={`heart-words ${index % 2 === 0 ? 'heart-words-rose' : 'heart-words-light'}`}
-              x="400"
-              y={row.y}
-              textAnchor="middle"
-              opacity="0.95"
-            >
-              {row.phrases}
-            </text>
-          ))}
-        </g>
-        <text
-          className="heart-dedication"
-          x="400"
-          y="402"
-          textAnchor="middle"
-          dominantBaseline="middle"
-          data-testid="text-heart-dedication"
-        >
-          دعاء
-        </text>
-        <text
-          className="sender-signature"
-          x="400"
-          y="778"
-          textAnchor="middle"
-          direction="rtl"
-          data-testid="text-sender-signature"
-        >
-          من ريان
-        </text>
-      </svg>
+    <main className="welcome-page">
+      <div className="welcome-lockup">
+        <h1>Welcome, Doua</h1>
+        <Link href="/heart" className="enter-link" data-testid="link-enter-heart">
+          Enter the heart <span aria-hidden="true">↗</span>
+        </Link>
+      </div>
     </main>
   );
 }
 
-export default Home;
+function Heart() {
+  const [layout, setLayout] = useState<PhrasePlacement[]>(() => createRandomHeartLayout());
+  const [revealed, setRevealed] = useState(0);
+  const [replayKey, setReplayKey] = useState(0);
+  const [dedicationVisible, setDedicationVisible] = useState(false);
+
+  useEffect(() => {
+    const reducedMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+    setRevealed(0);
+    setDedicationVisible(false);
+    let dedicationTimer: number | undefined;
+
+    if (reducedMotion) {
+      setRevealed(layout.length);
+      dedicationTimer = window.setTimeout(() => setDedicationVisible(true), 220);
+      return () => window.clearTimeout(dedicationTimer);
+    }
+
+    let index = 0;
+    const timer = window.setInterval(() => {
+      index += 1;
+      setRevealed(index);
+      if (index >= layout.length) {
+        window.clearInterval(timer);
+        dedicationTimer = window.setTimeout(() => setDedicationVisible(true), 420);
+      }
+    }, 24);
+
+    return () => {
+      window.clearInterval(timer);
+      if (dedicationTimer !== undefined) window.clearTimeout(dedicationTimer);
+    };
+  }, [layout, replayKey]);
+
+  const replay = () => {
+    setLayout(createRandomHeartLayout());
+    setRevealed(0);
+    setDedicationVisible(false);
+    setReplayKey((key) => key + 1);
+  };
+
+  return (
+    <main className="heart-page">
+      <svg
+        className="heart-art"
+        viewBox={`0 0 ${HEART_SIZE} ${HEART_SIZE}`}
+        role="img"
+        aria-labelledby="heart-title"
+      >
+        <title id="heart-title">A heart of love for Doua</title>
+        <defs>
+          <clipPath id="phrase-heart-clip">
+            <path d={HEART_PATH} />
+          </clipPath>
+        </defs>
+        <g clipPath="url(#phrase-heart-clip)" aria-hidden="true">
+          {layout.map((placement, index) => (
+            <text
+              key={`${replayKey}-${placement.id}`}
+              className={`heart-phrase ${placement.color === 'rose' ? 'phrase-rose' : 'phrase-blush'}${index < revealed ? ' is-visible' : ''}`}
+              x={placement.x}
+              y={placement.y}
+              textAnchor="middle"
+              dominantBaseline="middle"
+              direction="auto"
+              data-testid={`phrase-${placement.id}`}
+            >
+              {placement.text}
+            </text>
+          ))}
+        </g>
+        {dedicationVisible && (
+          <text
+            className="dedication"
+            x="400"
+            y="400"
+            textAnchor="middle"
+            dominantBaseline="middle"
+            data-testid="text-dedication"
+          >
+            Doua
+          </text>
+        )}
+      </svg>
+      <p className="signature" data-testid="text-signature">By Rayan</p>
+      <nav className="heart-nav" aria-label="Keepsake navigation">
+        <button type="button" className="text-action" onClick={replay} data-testid="button-replay">
+          Replay
+        </button>
+        <Link href="/" className="text-action" data-testid="link-home">Home</Link>
+        <Link href="/next" className="text-action" data-testid="link-next">Next</Link>
+      </nav>
+    </main>
+  );
+}
+
+function NextPage() {
+  return (
+    <main className="next-page">
+      <Link href="/heart" className="back-link" data-testid="link-back-heart">
+        <span aria-hidden="true">←</span> Back
+      </Link>
+    </main>
+  );
+}
+
+function NotFound() {
+  return (
+    <main className="next-page">
+      <Link href="/" className="back-link" data-testid="link-back-home">
+        <span aria-hidden="true">←</span> Home
+      </Link>
+    </main>
+  );
+}
+
+function App() {
+  return (
+    <WouterRouter base={import.meta.env.BASE_URL.replace(/\/$/, '')}>
+      <Switch>
+        <Route path="/" component={Welcome} />
+        <Route path="/heart" component={Heart} />
+        <Route path="/next" component={NextPage} />
+        <Route component={NotFound} />
+      </Switch>
+    </WouterRouter>
+  );
+}
+
+export default App;
