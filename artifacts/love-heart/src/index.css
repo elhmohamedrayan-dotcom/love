@@ -1,4 +1,4 @@
-@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
+@import url('https://fonts.googleapis.com/css2?family=DM+Mono:wght@400;500&family=DM+Sans:wght@400;500;600;700&family=Noto+Naskh+Arabic:wght@400;600;700&family=Playfair+Display:ital,wght@0,500;0,600;1,500;1,600&display=swap');
 @import 'tailwindcss';
 @import 'tw-animate-css';
 @plugin "@tailwindcss/typography";
@@ -25,7 +25,7 @@
 
 :root {
   color-scheme: dark;
-  --background: 320 13% 6%;
+  --background: 0 0% 0%;
   --foreground: 22 35% 91%;
   --card: 320 14% 9%;
   --card-foreground: 22 35% 91%;
@@ -273,4 +273,47 @@ button:focus-visible, input:focus-visible { outline: 3px solid #c74562; outline-
 }
 @media (prefers-reduced-motion: reduce) {
   *, *::before, *::after { scroll-behavior: auto !important; animation-duration: .01ms !important; animation-iteration-count: 1 !important; transition-duration: .01ms !important; }
+}
+
+.love-scene {
+  display: grid;
+  width: 100%;
+  min-height: 100svh;
+  place-items: center;
+  overflow: hidden;
+  background: #000;
+}
+.love-art {
+  display: block;
+  width: min(100vw, 100svh, 900px);
+  height: min(100vw, 100svh, 900px);
+}
+.heart-words {
+  font-family: var(--app-font-sans);
+  font-size: 16px;
+  font-weight: 600;
+  letter-spacing: .025em;
+  transition: opacity .22s linear;
+}
+.heart-words-rose { fill: #ff4d72; }
+.heart-words-light { fill: #ff8398; }
+.heart-dedication {
+  fill: #fff4f6;
+  stroke: #090609;
+  stroke-width: 13px;
+  stroke-linejoin: round;
+  paint-order: stroke;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 54px;
+  font-weight: 700;
+  filter: drop-shadow(0 2px 10px #ff537d99);
+  pointer-events: none;
+}
+.sender-signature {
+  fill: #f6c2cf;
+  font-family: 'Noto Naskh Arabic', serif;
+  font-size: 25px;
+  font-weight: 600;
+  opacity: .94;
+  pointer-events: none;
 }
