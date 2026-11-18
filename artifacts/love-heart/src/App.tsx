@@ -44,9 +44,9 @@ function Heart() {
       setRevealed(index);
       if (index >= layout.length) {
         window.clearInterval(timer);
-        dedicationTimer = window.setTimeout(() => setDedicationVisible(true), 420);
+        dedicationTimer = window.setTimeout(() => setDedicationVisible(true), 350);
       }
-    }, 24);
+    }, 20);
 
     return () => {
       window.clearInterval(timer);
