@@ -83,6 +83,8 @@ function Heart() {
               x={placement.x}
               y={placement.y}
               textAnchor="middle"
+              textLength={placement.width}
+              lengthAdjust="spacingAndGlyphs"
               dominantBaseline="middle"
               direction="auto"
               data-testid={`phrase-${placement.id}`}
