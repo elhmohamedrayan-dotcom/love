@@ -1,0 +1,28 @@
+kind = "web"
+previewPath = "/"
+title = "Love Heart"
+description = "An animated love-heart artwork that traces multilingual expressions of love on a dark canvas."
+version = "1.0.0"
+id = "artifacts/love-heart"
+router = "path"
+
+[[services]]
+name = "web"
+paths = [ "/" ]
+localPort = 18614
+
+[services.development]
+run = "pnpm --filter @workspace/love-heart run dev"
+
+[services.production]
+build = [ "pnpm", "--filter", "@workspace/love-heart", "run", "build" ]
+serve = "static"
+publicDir = "artifacts/love-heart/dist/public"
+
+[[services.production.rewrites]]
+from = "/*"
+to = "/index.html"
+
+[services.env]
+PORT = "18614"
+BASE_PATH = "/"
